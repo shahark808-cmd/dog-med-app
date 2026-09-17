@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#bd6444" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="תרופות לכלב" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="icon" href="/icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <title>מעקב תרופות לחיות מחמד</title>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-icon">🐾</span>
+          <span class="brand-name">תרופות לחיות מחמד</span>
+        </div>
+        <div id="whoami-bar" class="whoami-bar" hidden>
+          <span id="whoami-name" class="whoami-name"></span>
+          <button id="change-name-btn" type="button" class="btn-ghost">החלף שם</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- מסך כניסה: שם בלבד -->
+    <section id="login-view" class="view login-view">
+      <div class="auth-card">
+        <div class="auth-icon">🐾</div>
+        <h2>היי, מי אתה?</h2>
+        <p class="auth-subtitle">רק כדי לדעת מי סימן שנתן תרופה — בלי סיסמה.</p>
+        <form id="login-form">
+          <input id="login-name-input" type="text" placeholder="השם שלך" autocomplete="name" required />
+          <button type="submit" class="btn-primary">כניסה</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- מסך ראשי: חיות + תרופות -->
+    <section id="app-view" class="view" hidden>
+      <nav class="tabs" role="tablist">
+        <button id="tab-meds-btn" type="button" class="tab-btn active" role="tab" aria-selected="true">תרופות</button>
+        <button id="tab-history-btn" type="button" class="tab-btn" role="tab" aria-selected="false">היסטוריה</button>
+      </nav>
+
+      <div id="meds-view">
+        <div id="pets-list"></div>
+
+        <button id="add-pet-trigger" type="button" class="add-trigger-btn add-trigger-btn-standalone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          <span>הוספת חיה</span>
+        </button>
+
+        <form id="add-pet-form" class="card" hidden>
+          <h2>הוספת חיה</h2>
+          <input id="pet-name-input" type="text" placeholder="שם החיה" required />
+          <div id="emoji-picker" class="emoji-picker"></div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">הוסף חיה</button>
+            <button type="button" id="cancel-add-pet-btn" class="btn-text">ביטול</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="history-view" hidden>
+        <h2 class="section-title">היסטוריה</h2>
+        <ul id="history-list"></ul>
+      </div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="/config.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
