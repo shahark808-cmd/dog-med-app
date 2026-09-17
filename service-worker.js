@@ -1,6 +1,10 @@
 // Service worker בסיסי — רק כדי שאפשר יהיה להתקין את האתר למסך הבית.
-// בלי אסטרטגיית קאשינג מורכבת, בכוונה (לא נדרש יותר מזה כרגע).
-const CACHE_NAME = 'dogmeds-v1';
+// רשת קודם (network-first): תמיד מנסים לטעון גרסה טרייה, והקאש משמש רק
+// כ-fallback כשאין רשת. חשוב במיוחד כי הקוד עדיין מתפתח לעיתים קרובות —
+// אסטרטגיית cache-first (כמו שהייתה כאן קודם) הייתה תוקעת מכשירים על
+// גרסה ישנה, כי דפדפנים בודקים עדכון ל-service worker רק כשהקובץ הזה
+// עצמו משתנה — לא כשהקבצים שהוא מטמין משתנים.
+const CACHE_NAME = 'dogmeds-v2';
 const APP_SHELL = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -18,6 +22,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request)),
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request)),
   );
 });
