@@ -258,7 +258,7 @@ button.is-busy {
 /* add-trigger (progressive disclosure) */
 
 .add-section {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
 }
 
 .add-trigger-btn {
@@ -288,7 +288,7 @@ button.is-busy {
 }
 
 .add-trigger-btn-standalone {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 /* layout */
@@ -435,8 +435,8 @@ textarea:focus {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
   box-shadow: var(--shadow-1);
 }
 
@@ -488,7 +488,7 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4) 0;
+  padding: var(--space-3) 0;
   border-top: 1px solid var(--border);
 }
 
@@ -579,8 +579,8 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
   border-top: 1px solid var(--border);
 }
 
@@ -617,8 +617,8 @@ textarea:focus {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: var(--space-4);
-  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
   box-shadow: var(--shadow-1);
 }
 
