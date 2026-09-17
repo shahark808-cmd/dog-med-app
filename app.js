@@ -2,7 +2,6 @@
 
 const WHOAMI_KEY = 'dogmeds-whoami';
 const EMOJIS = ['🐶', '🐕', '🐩', '🦮', '🐈', '🐇'];
-const DOSES_PER_DAY = 3; // קבוע לכל התרופות — לא מוגדר לפי תרופה
 
 const ICONS = {
   check:
@@ -180,15 +179,18 @@ function renderMedRow(med) {
     info.appendChild(meta);
   }
 
+  const times = med.times_per_day || 1;
   const count = effectiveGivenCount(med);
 
   if (count > 0) {
     const status = document.createElement('span');
     status.className = 'badge badge-success';
     status.textContent =
-      count >= DOSES_PER_DAY
-        ? `כל המנות ניתנו היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`
-        : `${count} מתוך ${DOSES_PER_DAY} היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`;
+      times <= 1
+        ? `ניתן ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`
+        : count >= times
+          ? `כל המנות ניתנו היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`
+          : `${count} מתוך ${times} היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`;
     info.appendChild(status);
   }
 
@@ -197,15 +199,21 @@ function renderMedRow(med) {
   const actions = document.createElement('div');
   actions.className = 'med-actions';
 
-  for (let i = 1; i <= DOSES_PER_DAY; i++) {
+  for (let i = 1; i <= times; i++) {
     const given = i <= count;
     const checkBtn = document.createElement('button');
     checkBtn.type = 'button';
-    checkBtn.className = 'check-btn check-btn-sm' + (given ? ' given' : '');
+    checkBtn.className = 'check-btn' + (times > 1 ? ' check-btn-sm' : '') + (given ? ' given' : '');
     checkBtn.innerHTML = ICONS.check;
     checkBtn.setAttribute(
       'aria-label',
-      given ? `בטלו את מנה ${i} מתוך ${DOSES_PER_DAY} של ${med.name}` : `סמנו מנה ${i} מתוך ${DOSES_PER_DAY} של ${med.name}`,
+      given
+        ? times <= 1
+          ? `${med.name} סומנה כניתנה — לחצו לביטול`
+          : `בטלו את מנה ${i} מתוך ${times} של ${med.name}`
+        : times <= 1
+          ? `סמנו ש-${med.name} ניתנה`
+          : `סמנו מנה ${i} מתוך ${times} של ${med.name}`,
     );
     checkBtn.addEventListener('click', () => setGivenCount(med.id, given ? i - 1 : i, checkBtn));
     actions.appendChild(checkBtn);
@@ -253,6 +261,25 @@ function renderAddMedSection(petId) {
   instructionsInput.type = 'text';
   instructionsInput.placeholder = 'הנחיות (למשל: עם אוכל)';
 
+  const timesId = `times-per-day-${petId}`;
+  const timesLabel = document.createElement('label');
+  timesLabel.className = 'field-label';
+  timesLabel.htmlFor = timesId;
+  timesLabel.textContent = 'כמה פעמים ביום';
+
+  const timesInput = document.createElement('input');
+  timesInput.type = 'number';
+  timesInput.id = timesId;
+  timesInput.min = '1';
+  timesInput.max = '12';
+  timesInput.value = '1';
+  timesInput.inputMode = 'numeric';
+
+  const timesField = document.createElement('div');
+  timesField.className = 'times-field';
+  timesField.appendChild(timesLabel);
+  timesField.appendChild(timesInput);
+
   const formActions = document.createElement('div');
   formActions.className = 'form-actions';
 
@@ -278,6 +305,7 @@ function renderAddMedSection(petId) {
   form.appendChild(nameInput);
   form.appendChild(dosageInput);
   form.appendChild(instructionsInput);
+  form.appendChild(timesField);
   form.appendChild(formActions);
 
   trigger.addEventListener('click', () => {
@@ -291,8 +319,9 @@ function renderAddMedSection(petId) {
     e.preventDefault();
     const name = nameInput.value.trim();
     if (!name) return;
+    const timesPerDay = Math.max(1, parseInt(timesInput.value, 10) || 1);
     const ok = await withBusy(submitBtn, () =>
-      addMedication(petId, name, dosageInput.value.trim(), instructionsInput.value.trim()),
+      addMedication(petId, name, dosageInput.value.trim(), instructionsInput.value.trim(), timesPerDay),
     );
     if (ok) {
       form.reset();
@@ -337,13 +366,14 @@ function renderHistory() {
     }
     title.appendChild(document.createTextNode(`${pet ? pet.name : ''} — ${med.name}`));
 
+    const times = med.times_per_day || 1;
     const count = effectiveGivenCount(med);
     const meta = document.createElement('div');
     meta.className = 'history-meta';
     meta.textContent =
-      count >= DOSES_PER_DAY
-        ? `כל המנות ניתנו היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`
-        : `${count} מתוך ${DOSES_PER_DAY} היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`;
+      times <= 1
+        ? `ניתן ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`
+        : `${count} מתוך ${times} היום · אחרונה ב-${formatTime(med.last_given_at)} ע"י ${med.last_given_by}`;
 
     li.appendChild(title);
     li.appendChild(meta);
@@ -389,13 +419,14 @@ async function deletePet(petId, button) {
   }
 }
 
-async function addMedication(petId, name, dosageText, instructionsText) {
+async function addMedication(petId, name, dosageText, instructionsText, timesPerDay) {
   if (!name) return false;
   const { error } = await db.from('medications').insert({
     pet_id: petId,
     name,
     dosage_text: dosageText || null,
     instructions_text: instructionsText || null,
+    times_per_day: timesPerDay || 1,
   });
   if (error) {
     console.error(error);
