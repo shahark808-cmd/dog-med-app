@@ -21,3 +21,8 @@ create table medications (
 );
 
 alter publication supabase_realtime add table pets, medications;
+
+-- Supabase מפעיל RLS כברירת מחדל על טבלאות חדשות (חוסם הכל בלי policies) —
+-- מכבים אותה במפורש, כי אין כאן אימות משתמשים בכלל.
+alter table pets disable row level security;
+alter table medications disable row level security;
