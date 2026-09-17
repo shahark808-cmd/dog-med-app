@@ -376,6 +376,24 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+.times-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.field-label {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.times-field input {
+  width: 72px;
+  flex: none;
+  text-align: center;
+}
+
 /* tabs (segmented control — an idiomatic pill use) */
 
 .tabs {
@@ -511,8 +529,10 @@ textarea:focus {
 .med-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .check-btn {
@@ -530,6 +550,16 @@ textarea:focus {
 .check-btn svg {
   width: 18px;
   height: 18px;
+}
+
+.check-btn-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.check-btn-sm svg {
+  width: 14px;
+  height: 14px;
 }
 
 .check-btn:hover {
