@@ -376,24 +376,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
-.times-field {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.field-label {
-  font-size: 0.85rem;
-  color: var(--muted-foreground);
-  white-space: nowrap;
-}
-
-.times-field input {
-  width: 72px;
-  flex: none;
-  text-align: center;
-}
-
 /* tabs (segmented control — an idiomatic pill use) */
 
 .tabs {

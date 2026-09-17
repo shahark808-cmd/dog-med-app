@@ -27,8 +27,8 @@ alter publication supabase_realtime add table pets, medications;
 alter table pets disable row level security;
 alter table medications disable row level security;
 
--- תרופה שניתנת כמה פעמים ביום (למשל 3) — בלי לוג נפרד: סופרים "כמה ניתנו
--- היום" ומאפסים באופן עצל (lazy) בכל פעם שהתאריך השתנה, בלי cron.
-alter table medications add column times_per_day int not null default 1;
+-- כל תרופה מוצגת עם 3 סימוני וי קבועים ליום (DOSES_PER_DAY באפליקציה, לא
+-- עמודה במסד) — בלי לוג נפרד: סופרים "כמה ניתנו היום" ומאפסים באופן עצל
+-- (lazy) בכל פעם שהתאריך השתנה, בלי cron.
 alter table medications add column given_today_count int not null default 0;
 alter table medications add column given_today_date date;
